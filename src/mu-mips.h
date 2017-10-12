@@ -56,9 +56,9 @@ typedef struct CPU_Pipeline_Reg_Struct{
 	uint64_t AA;
 	uint64_t BB;
 	int RegWrite;
-	int RegRead;
 	int RegisterRs;
 	int RegisterRt; 
+	int RegisterRd;
 } CPU_Pipeline_Reg;
 
 /***************************************************************/

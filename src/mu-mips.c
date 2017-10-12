@@ -37,9 +37,9 @@ uint32_t mem_read_32(uint32_t address)
 		if ( (address >= MEM_REGIONS[i].begin) &&  ( address <= MEM_REGIONS[i].end) ) {
 			uint32_t offset = address - MEM_REGIONS[i].begin;
 			return (MEM_REGIONS[i].mem[offset+3] << 24) |
-					(MEM_REGIONS[i].mem[offset+2] << 16) |
-					(MEM_REGIONS[i].mem[offset+1] <<  8) |
-					(MEM_REGIONS[i].mem[offset+0] <<  0);
+				(MEM_REGIONS[i].mem[offset+2] << 16) |
+				(MEM_REGIONS[i].mem[offset+1] <<  8) |
+				(MEM_REGIONS[i].mem[offset+0] <<  0);
 		}
 	}
 	return 0;
@@ -77,7 +77,7 @@ void cycle() {
 /* Simulate MIPS for n cycles                                                                                       */
 /***************************************************************/
 void run(int num_cycles) {                                      
-	
+
 	if (RUN_FLAG == FALSE) {
 		printf("Simulation Stopped\n\n");
 		return;
@@ -249,15 +249,15 @@ void reset() {
 	}
 	CURRENT_STATE.HI = 0;
 	CURRENT_STATE.LO = 0;
-	
+
 	for (i = 0; i < NUM_MEM_REGION; i++) {
 		uint32_t region_size = MEM_REGIONS[i].end - MEM_REGIONS[i].begin + 1;
 		memset(MEM_REGIONS[i].mem, 0, region_size);
 	}
-	
+
 	/*load program*/
 	load_program();
-	
+
 	/*reset PC*/
 	INSTRUCTION_COUNT = 0;
 	CURRENT_STATE.PC =  MEM_TEXT_BEGIN;
@@ -313,7 +313,7 @@ void handle_pipeline()
 {
 	/*INSTRUCTION_COUNT should be incremented when instruction is done*/
 	/*Since we do not have branch/jump instructions, INSTRUCTION_COUNT should be incremented in WB stage */
-    
+
 	WB();
 	MEM();
 	EX();
@@ -327,112 +327,112 @@ void handle_pipeline()
 void WB()
 {
 	/*IMPLEMENT THIS*/
-    uint32_t opcode, function, rd, rt;
-    
-    opcode = (MEM_WB.IR & 0xFC000000) >> 26;
+	uint32_t opcode, function, rd, rt;
+
+	opcode = (MEM_WB.IR & 0xFC000000) >> 26;
 	function = MEM_WB.IR & 0x0000003F;
-    rt = (MEM_WB.IR & 0x001F0000) >> 16;
-    rd = (MEM_WB.IR & 0x0000F800) >> 11;
-    
-        if(opcode == 0x00 && MEM_WB.IR != 0){
+	rt = (MEM_WB.IR & 0x001F0000) >> 16;
+	rd = (MEM_WB.IR & 0x0000F800) >> 11;
+
+	if(opcode == 0x00 && MEM_WB.IR != 0){
 		switch(function){
 			case 0x00: //SLL
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x02: //SRL
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x03: //SRA 
-                NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x0C: //SYSCALL
-                if(MEM_WB.ALUOutput == 0xa){
+				if(MEM_WB.ALUOutput == 0xa){
 					RUN_FLAG = FALSE;
-                }
-                //print_instruction(CURRENT_STATE.PC);
+				}
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x10: //MFHI
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x11: //MTHI
 				NEXT_STATE.HI = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x12: //MFLO
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x13: //MTLO
 				NEXT_STATE.LO = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x18: //MULT
-                NEXT_STATE.LO = (MEM_WB.AA & 0x00000000FFFFFFFF);
-                NEXT_STATE.HI = (MEM_WB.AA & 0XFFFFFFFF00000000) >> 32;
-                //print_instruction(CURRENT_STATE.PC);
+				NEXT_STATE.LO = (MEM_WB.AA & 0x00000000FFFFFFFF);
+				NEXT_STATE.HI = (MEM_WB.AA & 0XFFFFFFFF00000000) >> 32;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x19: //MULTU
-                NEXT_STATE.LO = (MEM_WB.AA & 0x00000000FFFFFFFF);
-                NEXT_STATE.HI = (MEM_WB.AA & 0XFFFFFFFF00000000) >> 32;
-                //print_instruction(CURRENT_STATE.PC);
+				NEXT_STATE.LO = (MEM_WB.AA & 0x00000000FFFFFFFF);
+				NEXT_STATE.HI = (MEM_WB.AA & 0XFFFFFFFF00000000) >> 32;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x1A: //DIV 
-                NEXT_STATE.LO = MEM_WB.ALUOutput;
-                NEXT_STATE.HI = MEM_WB.A;
-                //print_instruction(CURRENT_STATE.PC);
+				NEXT_STATE.LO = MEM_WB.ALUOutput;
+				NEXT_STATE.HI = MEM_WB.A;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x1B: //DIVU
 				NEXT_STATE.LO = MEM_WB.ALUOutput;
-                NEXT_STATE.HI = MEM_WB.A;
-                //print_instruction(CURRENT_STATE.PC);
+				NEXT_STATE.HI = MEM_WB.A;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x20: //ADD
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x21: //ADDU 
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x22: //SUB
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x23: //SUBU
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x24: //AND
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x25: //OR
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x26: //XOR
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x27: //NOR
 				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x2A: //SLT
-                NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				NEXT_STATE.REGS[rd] = MEM_WB.ALUOutput;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			default:
 				printf("WB at 0x%x is not implemented!\n", CURRENT_STATE.PC);
-                INSTRUCTION_COUNT--;
+				INSTRUCTION_COUNT--;
 				break;
 		}
 	}
-    else{
+	else{
 		switch(opcode){
 			case 0x08: //ADDI
 				NEXT_STATE.REGS[rt] = MEM_WB.ALUOutput;
@@ -474,29 +474,29 @@ void WB()
 				NEXT_STATE.REGS[rt] = MEM_WB.LMD;
 				//print_instruction(CURRENT_STATE.PC);
 				break;
-            case 0x28: //SB
-                printf("WB at 0x%x is not implemented!\n", CURRENT_STATE.PC);
+			case 0x28: //SB
+				printf("WB at 0x%x is not implemented!\n", CURRENT_STATE.PC);
 				//for count the instruction
 				//print_instruction(CURRENT_STATE.PC);				
 				break;
 			case 0x29: //SH
-                printf("WB at 0x%x is not implemented!\n", CURRENT_STATE.PC);
+				printf("WB at 0x%x is not implemented!\n", CURRENT_STATE.PC);
 				//for count the instruction
 				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x2B: //SW
-                printf("WB at 0x%x is not implemented!\n", CURRENT_STATE.PC);
+				printf("WB at 0x%x is not implemented!\n", CURRENT_STATE.PC);
 				//for count the instruction
 				//print_instruction(CURRENT_STATE.PC);
 				break;
 			default:
 				// put more things here
 				printf("WB at 0x%x is not implemented!\n", CURRENT_STATE.PC);
-                INSTRUCTION_COUNT--;
+				INSTRUCTION_COUNT--;
 				break;
 		}
 	}
-    INSTRUCTION_COUNT++;
+	INSTRUCTION_COUNT++;
 }
 
 /************************************************************/
@@ -505,107 +505,107 @@ void WB()
 void MEM()
 {
 	/*IMPLEMENT THIS*/
-    MEM_WB.IR = EX_MEM.IR;
-    
-    uint32_t opcode, function, data;
-    
-    opcode = (MEM_WB.IR & 0xFC000000) >> 26;
+	MEM_WB.IR = EX_MEM.IR;
+
+	uint32_t opcode, function, data;
+
+	opcode = (MEM_WB.IR & 0xFC000000) >> 26;
 	function = MEM_WB.IR & 0x0000003F;
-    
-    if(opcode == 0x00 && MEM_WB.IR != 0){
+
+	if(opcode == 0x00 && MEM_WB.IR != 0){
 		switch(function){
 			case 0x00: //SLL
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-               // print_instruction(CURRENT_STATE.PC);
+				// print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x02: //SRL
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x03: //SRA 
-                MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x0C: //SYSCALL
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-               print_instruction(CURRENT_STATE.PC);
+				print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x10: //MFHI
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x11: //MTHI
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x12: //MFLO
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x13: //MTLO
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x18: //MULT
-                MEM_WB.AA = EX_MEM.AA;
-                //print_instruction(CURRENT_STATE.PC);
+				MEM_WB.AA = EX_MEM.AA;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x19: //MULTU
-                MEM_WB.AA = EX_MEM.AA;
-                //print_instruction(CURRENT_STATE.PC);
+				MEM_WB.AA = EX_MEM.AA;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x1A: //DIV 
-                MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                MEM_WB.A = EX_MEM.A;
-                //print_instruction(CURRENT_STATE.PC);
+				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
+				MEM_WB.A = EX_MEM.A;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x1B: //DIVU
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                MEM_WB.A = EX_MEM.A;
-                //print_instruction(CURRENT_STATE.PC);
+				MEM_WB.A = EX_MEM.A;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x20: //ADD
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x21: //ADDU 
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x22: //SUB
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x23: //SUBU
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x24: //AND
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x25: //OR
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x26: //XOR
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x27: //NOR
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x2A: //SLT
-                MEM_WB.ALUOutput = EX_MEM.ALUOutput;
-                //print_instruction(CURRENT_STATE.PC);
+				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			default:
 				printf("MEM at 0x%x is not implemented!\n", CURRENT_STATE.PC);
 				break;
 		}
 	}
-    else{
+	else{
 		switch(opcode){
 			case 0x08: //ADDI
 				MEM_WB.ALUOutput = EX_MEM.ALUOutput;
@@ -677,55 +677,55 @@ void MEM()
 void EX()
 {
 	/*IMPLEMENT THIS*/
-    EX_MEM.IR = ID_EX.IR;
-        
-    uint32_t opcode, function;
-    uint64_t p1, p2;
-    
-    opcode = (EX_MEM.IR & 0xFC000000) >> 26;
+	EX_MEM.IR = ID_EX.IR;
+
+	uint32_t opcode, function;
+	uint64_t p1, p2;
+
+	opcode = (EX_MEM.IR & 0xFC000000) >> 26;
 	function = EX_MEM.IR & 0x0000003F;
-    
-    if(opcode == 0x00 && EX_MEM.IR != 0){
+
+	if(opcode == 0x00 && EX_MEM.IR != 0){
 		switch(function){
 			case 0x00: //SLL
 				EX_MEM.ALUOutput = ID_EX.A << ID_EX.imm;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x02: //SRL
 				EX_MEM.ALUOutput = ID_EX.A >> ID_EX.imm;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x03: //SRA 
-                if ((ID_EX.A & 0x80000000) == 1){
-                    EX_MEM.ALUOutput = ~(~ID_EX.A >> ID_EX.imm);
-                }
-                else{
-                    EX_MEM.ALUOutput = ID_EX.A >> ID_EX.imm;
-                }
-                //print_instruction(CURRENT_STATE.PC);
+				if ((ID_EX.A & 0x80000000) == 1){
+					EX_MEM.ALUOutput = ~(~ID_EX.A >> ID_EX.imm);
+				}
+				else{
+					EX_MEM.ALUOutput = ID_EX.A >> ID_EX.imm;
+				}
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x0C: //SYSCALL
 				EX_MEM.ALUOutput = ID_EX.A;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x10: //MFHI
 				EX_MEM.ALUOutput = ID_EX.A;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x11: //MTHI
 				EX_MEM.ALUOutput = ID_EX.A;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x12: //MFLO
 				EX_MEM.ALUOutput = ID_EX.A;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x13: //MTLO
 				EX_MEM.ALUOutput = ID_EX.A;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x18: //MULT
-                if ((ID_EX.A & 0x80000000) == 0x80000000){
+				if ((ID_EX.A & 0x80000000) == 0x80000000){
 					p1 = 0xFFFFFFFF00000000 | ID_EX.A;
 				}else{
 					p1 = 0x00000000FFFFFFFF & ID_EX.A;
@@ -736,73 +736,73 @@ void EX()
 					p2 = 0x00000000FFFFFFFF & ID_EX.B;
 				}
 				EX_MEM.AA = p1 * p2;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x19: //MULTU
-                EX_MEM.AA = ID_EX.A * ID_EX.B;
-                //print_instruction(CURRENT_STATE.PC);
+				EX_MEM.AA = ID_EX.A * ID_EX.B;
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x1A: //DIV 
-                if (ID_EX.B != 0){
-                    EX_MEM.ALUOutput = ID_EX.A / ID_EX.B;
-                    EX_MEM.A = ID_EX.A % ID_EX.B;
-                }
-                //print_instruction(CURRENT_STATE.PC);
+				if (ID_EX.B != 0){
+					EX_MEM.ALUOutput = ID_EX.A / ID_EX.B;
+					EX_MEM.A = ID_EX.A % ID_EX.B;
+				}
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x1B: //DIVU
 				if (ID_EX.B != 0){
-                    EX_MEM.ALUOutput = ID_EX.A / ID_EX.B;
-                    EX_MEM.A = ID_EX.A % ID_EX.B;
-                }
-                //print_instruction(CURRENT_STATE.PC);
+					EX_MEM.ALUOutput = ID_EX.A / ID_EX.B;
+					EX_MEM.A = ID_EX.A % ID_EX.B;
+				}
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x20: //ADD
 				EX_MEM.ALUOutput = ID_EX.A + ID_EX.B;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x21: //ADDU 
 				EX_MEM.ALUOutput = ID_EX.A + ID_EX.B;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x22: //SUB
 				EX_MEM.ALUOutput = ID_EX.A - ID_EX.B;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x23: //SUBU
 				EX_MEM.ALUOutput = ID_EX.A - ID_EX.B;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x24: //AND
 				EX_MEM.ALUOutput = ID_EX.A & ID_EX.B;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x25: //OR
 				EX_MEM.ALUOutput = ID_EX.A | ID_EX.B;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x26: //XOR
 				EX_MEM.ALUOutput = ID_EX.A ^ ID_EX.B;
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x27: //NOR
 				EX_MEM.ALUOutput = ~(ID_EX.A | ID_EX.B);
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			case 0x2A: //SLT
-                if(ID_EX.A < ID_EX.B){
+				if(ID_EX.A < ID_EX.B){
 					EX_MEM.ALUOutput = 0x1;
 				}
 				else{
 					EX_MEM.ALUOutput = 0x0;
 				}
-                //print_instruction(CURRENT_STATE.PC);
+				//print_instruction(CURRENT_STATE.PC);
 				break;
 			default:
 				printf("EX at 0x%x is not implemented!\n", CURRENT_STATE.PC);
 				break;
 		}
 	}
-    else{
+	else{
 		switch(opcode){
 			case 0x08: //ADDI
 				EX_MEM.ALUOutput = ID_EX.A + ( (ID_EX.imm & 0x8000) > 0 ? (ID_EX.imm | 0xFFFF0000) : (ID_EX.imm & 0x0000FFFF));
@@ -877,202 +877,244 @@ void EX()
 void ID()
 {
 	/*IMPLEMENT THIS*/
-    ID_EX.IR = IF_ID.IR;
-    
-    uint32_t opcode, function, rs, rt, rd, sa, immediate;
-	
+	ID_EX.IR = IF_ID.IR;
+
+	uint32_t opcode, function, rs, rt, rd, sa, immediate;
+
 	//printf("[0x%x]\t", CURRENT_STATE.PC);
-	
+
 	opcode = (ID_EX.IR & 0xFC000000) >> 26;
 	function = ID_EX.IR & 0x0000003F;
 	rs = (ID_EX.IR & 0x03E00000) >> 21;
 	rt = (ID_EX.IR & 0x001F0000) >> 16;
-	//rd = (ID_EX.IR & 0x0000F800) >> 11;
+	rd = (ID_EX.IR & 0x0000F800) >> 11;
 	sa = (ID_EX.IR & 0x000007C0) >> 6;
-	immediate = ID_EX.IR & 0x0000FFFF;
-    
-    if(opcode == 0x00 && ID_EX.IR != 0){
-		switch(function){
-			case 0x00: //SLL
-				ID_EX.A = CURRENT_STATE.REGS[rt];
-                ID_EX.imm = sa;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x02: //SRL
-				ID_EX.A = CURRENT_STATE.REGS[rt];
-                ID_EX.imm = sa;
-               // print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x03: //SRA 
-                ID_EX.A = CURRENT_STATE.REGS[rt];
-                ID_EX.imm = sa;
-               // print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x0C: //SYSCALL
-				ID_EX.A = CURRENT_STATE.REGS[2];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x10: //MFHI
-				ID_EX.A = CURRENT_STATE.HI;
-               // print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x11: //MTHI
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-               // print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x12: //MFLO
-				ID_EX.A = CURRENT_STATE.LO;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x13: //MTLO
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x18: //MULT
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-               // print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x19: //MULTU
-				ID_EX.AA = (int64_t)CURRENT_STATE.REGS[rs];
-                ID_EX.BB = (int64_t)CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x1A: //DIV 
-				ID_EX.A = (int32_t)CURRENT_STATE.REGS[rs];
-                ID_EX.B = (int32_t)CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x1B: //DIVU
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x20: //ADD
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x21: //ADDU 
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x22: //SUB
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x23: //SUBU
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x24: //AND
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x25: //OR
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x26: //XOR
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x27: //NOR
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x2A: //SLT
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			default:
-				printf("ID at 0x%x is not implemented!\n", CURRENT_STATE.PC);
-				break;
+	immediate = ID_EX.IR & 0x0000FFFF;	
+	ID_EX.RegisterRs = rs;
+	ID_EX.RegisterRt = rt;
+	ID_EX.RegisterRd = 0;	// Set Rd conditionlly based on instr.
+	ID_EX.RegWrite = 0;	// RegWrite=1 when Rd != 0
+
+		if(opcode == 0x00 && ID_EX.IR != 0){
+			switch(function){
+				case 0x00: //SLL
+					ID_EX.A = CURRENT_STATE.REGS[rt];
+					ID_EX.imm = sa;
+					ID_EX.RegisterRs = 0;	// Not used 
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x02: //SRL
+					ID_EX.A = CURRENT_STATE.REGS[rt];
+					ID_EX.imm = sa;
+					ID_EX.RegisterRs = 0;	// Not used 
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					// print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x03: //SRA 
+					ID_EX.A = CURRENT_STATE.REGS[rt];
+					ID_EX.imm = sa;
+					ID_EX.RegisterRs = 0;	// Not used 
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					// print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x0C: //SYSCALL
+					ID_EX.A = CURRENT_STATE.REGS[2];
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x10: //MFHI
+					ID_EX.A = CURRENT_STATE.HI;
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegisterRt = 0;	// Not used
+					ID_EX.RegisterRs = 0;	// Not used
+					ID_EX.RegWrite = 1;
+					// print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x11: //MTHI
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.RegisterRt = 0;	// Not used
+					// print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x12: //MFLO
+					ID_EX.A = CURRENT_STATE.LO;
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegisterRt = 0;	// Not used
+					ID_EX.RegisterRs = 0;	// Not used
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x13: //MTLO
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.RegisterRt = 0;	// Not used
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x18: //MULT
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					// print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x19: //MULTU
+					ID_EX.AA = (int64_t)CURRENT_STATE.REGS[rs];
+					ID_EX.BB = (int64_t)CURRENT_STATE.REGS[rt];
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x1A: //DIV 
+					ID_EX.A = (int32_t)CURRENT_STATE.REGS[rs];
+					ID_EX.B = (int32_t)CURRENT_STATE.REGS[rt];
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x1B: //DIVU
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x20: //ADD
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x21: //ADDU 
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x22: //SUB
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x23: //SUBU
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x24: //AND
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x25: //OR
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x26: //XOR
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x27: //NOR
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x2A: //SLT
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.RegisterRd = rd;
+					ID_EX.RegWrite = 1;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				default:
+					printf("ID at 0x%x is not implemented!\n", CURRENT_STATE.PC);
+					break;
+			}
 		}
-	}
-    else{
-		switch(opcode){
-			case 0x08: //ADDI
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x09: //ADDIU
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x0A: //SLTI
-				ID_EX.A = (int32_t)CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x0C: //ANDI
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x0D: //ORI
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x0E: //XORI
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x0F: //LUI
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x20: //LB
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x21: //LH
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x23: //LW
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x28: //SB
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                ID_EX.imm = immediate;	
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x29: //SH
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			case 0x2B: //SW
-				ID_EX.A = CURRENT_STATE.REGS[rs];
-                ID_EX.B = CURRENT_STATE.REGS[rt];
-                ID_EX.imm = immediate;
-                //print_instruction(CURRENT_STATE.PC);
-				break;
-			default:
-				// put more things here
-				printf("ID at 0x%x is not implemented!\n", CURRENT_STATE.PC);
-				break;
+		else{
+			switch(opcode){
+				case 0x08: //ADDI
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x09: //ADDIU
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x0A: //SLTI
+					ID_EX.A = (int32_t)CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x0C: //ANDI
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x0D: //ORI
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x0E: //XORI
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x0F: //LUI
+					ID_EX.imm = immediate;
+					ID_EX.RegisterRs = 0;	// Not used
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x20: //LB
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x21: //LH
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x23: //LW
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x28: //SB
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.imm = immediate;	
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x29: //SH
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				case 0x2B: //SW
+					ID_EX.A = CURRENT_STATE.REGS[rs];
+					ID_EX.B = CURRENT_STATE.REGS[rt];
+					ID_EX.imm = immediate;
+					//print_instruction(CURRENT_STATE.PC);
+					break;
+				default:
+					// put more things here
+					printf("ID at 0x%x is not implemented!\n", CURRENT_STATE.PC);
+					break;
+			}
 		}
-    }
 }
 
 /************************************************************/
@@ -1081,16 +1123,16 @@ void ID()
 void IF()
 {
 	/*IMPLEMENT THIS*/
-    IF_ID.IR = mem_read_32(CURRENT_STATE.PC);
-    IF_ID.PC = CURRENT_STATE.PC + 4;
-    NEXT_STATE.PC = IF_ID.PC;
-    if (IF_ID.IR == 0){
-        printf("NO INSTRUCTIONS FOR IF.\n");
-    }
-    else{
-    print_instruction(CURRENT_STATE.PC);
-    }
-    //show_pipeline();
+	IF_ID.IR = mem_read_32(CURRENT_STATE.PC);
+	IF_ID.PC = CURRENT_STATE.PC + 4;
+	NEXT_STATE.PC = IF_ID.PC;
+	if (IF_ID.IR == 0){
+		printf("NO INSTRUCTIONS FOR IF.\n");
+	}
+	else{
+		print_instruction(CURRENT_STATE.PC);
+	}
+	//show_pipeline();
 }
 
 
@@ -1110,7 +1152,7 @@ void initialize() {
 void print_program(){
 	int i;
 	uint32_t addr;
-	
+
 	for(i=0; i<PROGRAM_SIZE; i++){
 		addr = MEM_TEXT_BEGIN + (i*4);
 		printf("[0x%x]\t", addr);
@@ -1123,9 +1165,9 @@ void print_program(){
 /************************************************************/
 void print_instruction(uint32_t addr){
 	uint32_t instruction, opcode, function, rs, rt, rd, sa, immediate, target;
-	
+
 	instruction = mem_read_32(addr);
-	
+
 	opcode = (instruction & 0xFC000000) >> 26;
 	function = instruction & 0x0000003F;
 	rs = (instruction & 0x03E00000) >> 21;
@@ -1134,10 +1176,10 @@ void print_instruction(uint32_t addr){
 	sa = (instruction & 0x000007C0) >> 6;
 	immediate = instruction & 0x0000FFFF;
 	target = instruction & 0x03FFFFFF;
-	
+
 	if(opcode == 0x00){
 		/*R format instructions here*/
-		
+
 		switch(function){
 			case 0x00:
 				printf("SLL $r%u, $r%u, 0x%x\n", rd, rt, sa);
@@ -1297,25 +1339,25 @@ void print_instruction(uint32_t addr){
 /************************************************************/
 void show_pipeline(){
 	/*IMPLEMENT THIS*/
-    printf("\nCurrent PC:[0x%x]\n", CURRENT_STATE.PC);
-    printf("IF_ID.IR:%u\n", IF_ID.IR);
-    print_instruction(IF_ID.PC - 4);
-    printf("IF_ID.PC:%u\n\n", IF_ID.PC);
-    printf("ID_EX.IR:%u\n", ID_EX.IR);
-    print_instruction(IF_ID.PC - 8);
-    printf("ID_EX.A:%u\n", ID_EX.A);
-    printf("ID_EX.B:%u\n", ID_EX.B);
-    printf("ID_EX.imm:%u\n\n", ID_EX.imm);
-    printf("EX_MEM.IR:%u\n", EX_MEM.IR);
-    print_instruction(IF_ID.PC - 12);
-    printf("EX_MEM.A:%u\n", EX_MEM.A);
-    printf("EX_MEM.B:%u\n", EX_MEM.B);
-    printf("EX_MEM.ALUOutput:%u\n\n", EX_MEM.ALUOutput);
-    printf("MEM_WB.IR:%u\n", MEM_WB.IR);
-    print_instruction(IF_ID.PC - 16);
-    printf("MEM_WB.ALUOutput:%u\n", MEM_WB.ALUOutput);
-    printf("MEM_WB.LMD:%u\n", MEM_WB.LMD);
-    printf("CYCLE %u\n", CYCLE_COUNT);
+	printf("\nCurrent PC:[0x%x]\n", CURRENT_STATE.PC);
+	printf("IF_ID.IR:%u\n", IF_ID.IR);
+	print_instruction(IF_ID.PC - 4);
+	printf("IF_ID.PC:%u\n\n", IF_ID.PC);
+	printf("ID_EX.IR:%u\n", ID_EX.IR);
+	print_instruction(IF_ID.PC - 8);
+	printf("ID_EX.A:%u\n", ID_EX.A);
+	printf("ID_EX.B:%u\n", ID_EX.B);
+	printf("ID_EX.imm:%u\n\n", ID_EX.imm);
+	printf("EX_MEM.IR:%u\n", EX_MEM.IR);
+	print_instruction(IF_ID.PC - 12);
+	printf("EX_MEM.A:%u\n", EX_MEM.A);
+	printf("EX_MEM.B:%u\n", EX_MEM.B);
+	printf("EX_MEM.ALUOutput:%u\n\n", EX_MEM.ALUOutput);
+	printf("MEM_WB.IR:%u\n", MEM_WB.IR);
+	print_instruction(IF_ID.PC - 16);
+	printf("MEM_WB.ALUOutput:%u\n", MEM_WB.ALUOutput);
+	printf("MEM_WB.LMD:%u\n", MEM_WB.LMD);
+	printf("CYCLE %u\n", CYCLE_COUNT);
 }
 
 /***************************************************************/
@@ -1325,7 +1367,7 @@ int main(int argc, char *argv[]) {
 	printf("\n**************************\n");
 	printf("Welcome to MU-MIPS SIM...\n");
 	printf("**************************\n\n");
-	
+
 	if (argc < 2) {
 		printf("Error: You should provide input file.\nUsage: %s <input program> \n\n",  argv[0]);
 		exit(1);
