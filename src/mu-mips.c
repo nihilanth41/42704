@@ -685,6 +685,15 @@ void EX()
 	opcode = (EX_MEM.IR & 0xFC000000) >> 26;
 	function = EX_MEM.IR & 0x0000003F;
 
+	// Forwarding logic
+	if( MEM_WB.RegWrite && ( (EX_MEM.RegisterRd != 0) && (EX_MEM.RegisterRd == ID_EX.RegisterRs) ) ) {
+		ForwardA = EX_MEM.RegisterRd;
+	}
+
+	if( EX_MEM.RegWrite && ( (EX_MEM.RegisterRd != 0) && (EX_MEM.RegisterRd == ID_EX.RegisterRt) ) ) {
+		ForwardB = EX_MEM.RegisterRd; 
+	}
+
 	if(opcode == 0x00 && EX_MEM.IR != 0){
 		switch(function){
 			case 0x00: //SLL
