@@ -80,10 +80,6 @@ CPU_Pipeline_Reg ID_EX;
 CPU_Pipeline_Reg EX_MEM;
 CPU_Pipeline_Reg MEM_WB;
 
-// For forwarding register values
-uint32_t ForwardA, ForwardB;
-
-
 char prog_file[32];
 
 
