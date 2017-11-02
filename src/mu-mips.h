@@ -53,12 +53,16 @@ typedef struct CPU_Pipeline_Reg_Struct{
 	uint32_t imm;
 	uint32_t ALUOutput;
 	uint32_t LMD;
-	uint64_t AA;
-	uint64_t BB;
-	int RegWrite;
-	int RegRead;
-	int RegisterRs;
-	int RegisterRt; 
+    uint64_t AA;
+    uint64_t BB;
+    int RegWrite;
+    int MemRead;
+    int FLAG;
+    uint32_t RegisterRd;
+    uint32_t RegisterRs;
+    uint32_t RegisterRt;
+    int forward;
+	
 } CPU_Pipeline_Reg;
 
 /***************************************************************/
@@ -70,13 +74,16 @@ int RUN_FLAG;	/* run flag*/
 uint32_t INSTRUCTION_COUNT;
 uint32_t CYCLE_COUNT;
 uint32_t PROGRAM_SIZE; /*in words*/
+int ENABLE_FORWARDING;
+int ForwardA;
+int ForwardB;
 
 
 /***************************************************************/
 /* Pipeline Registers.                                                                                                        */
 /***************************************************************/
-CPU_Pipeline_Reg IF_ID;
-CPU_Pipeline_Reg ID_EX;
+CPU_Pipeline_Reg ID_IF;
+CPU_Pipeline_Reg IF_EX;
 CPU_Pipeline_Reg EX_MEM;
 CPU_Pipeline_Reg MEM_WB;
 
